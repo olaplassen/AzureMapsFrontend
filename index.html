@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Digital Twin of KPMG Office Floor</title>
+    
+    <meta charset="utf-8" />
+    <link rel="shortcut icon" href="/favicon.ico" />
+    <meta http-equiv="x-ua-compatible" content="IE=Edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="This is a demo of the Azure Maps Creator indoor maps tutorial and the how-to implementation for the Azure Maps Web SDK." />
+    <meta name="keywords" content="Microsoft maps, map, gis, API, SDK, Creator, indoor maps, indoor, building" />
+    <meta name="author" content="Microsoft Azure Maps" />
+
+    <!-- Add references to the Azure Maps Map control JavaScript and CSS files. -->
+    <link rel="stylesheet" href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.css" type="text/css" />
+    <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js"></script>
+
+    <!-- Add references to the Azure Maps Map Creator module JavaScript and CSS files. -->
+    <link rel="stylesheet" href="https://atlas.microsoft.com/sdk/javascript/indoor/0.1/atlas-indoor.min.css" type="text/css" />
+    <script src="https://atlas.microsoft.com/sdk/javascript/indoor/0.1/atlas-indoor.min.js"></script>
+
+    <!-- Local scripts -->
+    <script type="text/javascript" src="src/weatherFunctions.js"></script>
+
+    <style>
+        .center {
+            margin: auto;
+            width: 50%;
+            border: 3px solid green;
+            padding: 10px;
+            }
+        .row {
+            display : flex;
+            align-items : center;
+            margin-bottom: 15px;
+            }
+        .box {
+            height: 20px;
+            width: 20px;
+            border: 1px solid black;
+            margin-right : 5px;
+            }
+        .lightred {
+            background-color: rgb(202, 74, 74);
+            }
+        .darkred {
+            background-color: rgb(168, 0, 0);
+            }
+
+            .green {
+            background-color: rgb(17, 143, 17);
+            }
+
+        .lightblue {
+            background-color: rgb(157, 157, 235);
+            }
+        .darktblue {
+            background-color: blue;
+            }
+    </style>
+    <script type='text/javascript'>
+        var map, indoorManager;
+
+        //Your tileset and stateset ID's for Azure Maps Creator.
+        //const tilesetId = 'd2342bdd-f62b-a9c1-fe0c-87d0a57de831';
+        //const statesetId = '79438af9-24c9-bbe4-d960-95dd38921040';
+
+        const tilesetId = '2550fafb-0766-f459-de27-422736ebf152';
+        const statesetId = 'e370d64d-0adf-11e9-80e7-98d1a381bd9a';
+
+        function GetMap() {
+            //Initialize a map instance.
+            //59.930159200317014, 10.712165104145974
+            // center: [-122.13203, 47.63645],
+            map = new atlas.Map('myMap', {
+                center: [10.71216, 59.93015],
+                //center: [-122.13203, 47.63645],
+                zoom: 19,
+                style: 'grayscale_light',
+                view: 'Auto',
+
+                //Add authentication details for connecting to Azure Maps.
+                authOptions: {
+                    //Use Azure Active Directory authentication.
+                    authType: 'subscriptionKey',
+                    subscriptionKey: 'CJzXiY8SYYk5oN2XlvseeGFovXj69NvmVw0Vj3D-W_0'
+                }
+            });
+
+            //Wait until the map resources are ready.
+            map.events.add('ready', function () {
+                //Add a map style selection control.
+                map.controls.add(new atlas.control.StyleControl({ mapStyles: "all" }), { position: "top-right" });
+
+                //Create an indoor maps manager.
+                indoorManager = new atlas.indoor.IndoorManager(map, {
+                    tilesetId: tilesetId,
+                    statesetId: statesetId // Optional
+                });
+
+                //Add a level control to the indoor manager.
+                indoorManager.setOptions({
+                    levelControl: new atlas.control.LevelControl({ position: 'top-right' })
+                });
+
+                if (statesetId.length > 0) {
+                    indoorManager.setDynamicStyling(true);
+                }
+
+                //Add event for when the focused facility level changes.
+                map.events.add('levelchanged', indoorManager, (eventData) => {
+                    //code that you want to run after a level has been changed
+                    writeToInfoPanel('The level has changed:', eventData);
+                });
+
+                //Add event for when the focused facility changes.
+                map.events.add('facilitychanged', indoorManager, (eventData) => {
+                    //code that you want to run after a facility has been changed
+                    writeToInfoPanel('The facility has changed:', eventData);
+                });
+                
+                popup = new atlas.Popup();
+                /* Upon a mouse click, log the feature properties to the browser's console. */
+                /*map.events.add("click", function (e) {
+
+                    var features = map.layers.getRenderedShapes(e.position, 'labels_indoor');
+                    
+                    writeToInfoPanel('Feature(s) clicked:', features);
+
+                    features.forEach(function (feature) {
+                        if (feature.layer.id == 'indoor_unit_office') {
+                            console.log(feature);
+                        }
+                    });
+                });
+                */
+                map.events.add('click', getWeatherForPoint);
+            });
+        }
+
+        function writeToInfoPanel(msg, json) {            
+            document.getElementById('infoPanel-msg').innerHTML = msg;
+
+            //Remove "map" object from json to prevent circular reference, and format JSON string.
+            document.getElementById('infoPanel-json').value = JSON.stringify(Object.assign({}, json, { map: undefined }), null, '\t').replace(/\"([^(\")"]+)\":/g, "$1:");
+        }
+    </script>
+</head>
+<body onload="GetMap()">
+    <div id="myMap" style="position:relative;width:100%;min-width:290px;height:900px;"></div>
+    
+    <div id="infoPanel" style="position:absolute;bottom:10px;left:10px;width:100%;height:350px;border:solid 1px #000;background-color:white;padding:5px;">
+        <div id="infoPanel-msg"></div>
+        <textarea id="infoPanel-json" style="width:95%;height:550px;white-space:nowrap"></textarea>
+    </div>
+    <div id="tempInfo" style="position:absolute;top:10px;right:10px;width:160px;height:230px;border:solid 1px #000;background-color:white;padding:5px;">
+        <b>Temperature:</b> <br/><br>
+        <div class="row">
+            <div class='box darktblue'></div>
+                <span> 0-15C</span>
+            </div>
+        
+        <div class="row">
+            <div class='box lightblue'></div>
+                <span> 16-18C</span>
+            </div>
+        
+        <div class="row">
+            <div class='box green'></div>
+                <span> 19-21C</span>
+            </div>
+        <div class="row">
+            <div class='box lightred'></div>
+                <span> 22-26C</span>
+            </div>
+        <div class="row">
+            <div class='box darkred'></div>
+                <span> 26-100C</span>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
