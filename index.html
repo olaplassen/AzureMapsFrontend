@@ -66,15 +66,12 @@
         //const statesetId = '79438af9-24c9-bbe4-d960-95dd38921040';
 
         const tilesetId = '91e5200a-244f-65d5-9b1a-ba04ef043e75';
-        const statesetId = 'ee9ac575-3281-d697-2bcf-dbd557ae53f8';
-
+        const statesetId1 = 'ee9ac575-3281-d697-2bcf-dbd557ae53f8';
+        const statesetId2 = '38fe0cb9-9b70-1d39-88ad-0e8b46db5d81'
         function GetMap() {
             //Initialize a map instance.
-            //59.930159200317014, 10.712165104145974
-            // center: [-122.13203, 47.63645],
             map = new atlas.Map('myMap', {
                 center: [10.71216, 59.93015],
-                //center: [-122.13203, 47.63645],
                 zoom: 19,
                 style: 'grayscale_light',
                 view: 'Auto',
@@ -95,7 +92,7 @@
                 //Create an indoor maps manager.
                 indoorManager = new atlas.indoor.IndoorManager(map, {
                     tilesetId: tilesetId,
-                    statesetId: statesetId // Optional
+                    statesetId: statesetId1 // Optional
                 });
 
                 //Add a level control to the indoor manager.
@@ -103,7 +100,7 @@
                     levelControl: new atlas.control.LevelControl({ position: 'top-right' })
                 });
 
-                if (statesetId.length > 0) {
+                if (statesetId1.length > 0) {
                     indoorManager.setDynamicStyling(true);
                 }
 
@@ -111,6 +108,7 @@
                 map.events.add('levelchanged', indoorManager, (eventData) => {
                     //code that you want to run after a level has been changed
                     console.log('The level has changed:', eventData);
+                    
                 });
 
                 //Add event for when the focused facility changes.
@@ -119,22 +117,23 @@
                     console.log('The facility has changed:', eventData);
                 });
                 
+                
                 popup = new atlas.Popup();
                 /* Upon a mouse click, log the feature properties to the browser's console. */
                 map.events.add("click", function (e) {
-
+                    
                     var features = map.layers.getRenderedShapes(e.position, 'labels_indoor');
                     
                     console.log('Feature(s) clicked:', features);
 
                     features.forEach(function (feature) {
-                        if (feature.layer.id == 'indoor_unit_office') {
-                            console.log(feature);
+                        if (feature.layer.id == 'microsoft.maps.indoor.labels_indoor.indoor_global_unit_label') {
+                            console.log(feature.state["stateValue:Temperature"]);
                         }
                     });
                 });
-                
-                /*map.events.add('click', getWeatherForPoint); */
+                window.onload = getWeatherForPoint();
+                map.events.add('click', changeStateSet);
             });
             /*function writeToInfoPanel(msg, json) {            
             document.getElementById('infoPanel-msg').innerHTML = msg;
@@ -143,7 +142,13 @@
             /*document.getElementById('infoPanel-json').value = JSON.stringify(Object.assign({}, json, { map: undefined }), null, '\t').replace(/\"([^(\")"]+)\":/g, "$1:");
         } */
         }
-
+        
+        function changeStateSet() {
+            console.log("changing stateset")
+            console.log(indoorManager)
+            indoorManager.options.statesetId = statesetId2;
+            console.log(indoorManager.options.statesetId)
+        }
     </script>
 </head>
 <body onload="GetMap()">

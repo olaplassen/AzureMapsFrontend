@@ -25,11 +25,11 @@ var weatherTemplate = {
 
 function getWeatherForPoint(e) {
     //Close the popup if it is open.
-    popup.close();
-
+    
+    //59.930350526029336, 10.7116141504173
     //Request the current conditions weather data and show it in the pop up.
-    var requestUrl = currentConditionsUrl.replace('{query}', e.position[1] + ',' + e.position[0]);
-
+    var requestUrl = currentConditionsUrl.replace('{query}', 59.93035 + ',' + 10.71161);
+    console.log(requestUrl)
     processRequest(requestUrl).then(response => {
         var content;
 
@@ -42,7 +42,7 @@ function getWeatherForPoint(e) {
 
         popup.setOptions({
             content: content,
-            position: e.position
+            position: [10.71161,59.93035]
         });
 
         popup.open(map);
