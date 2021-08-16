@@ -65,8 +65,8 @@
         //const tilesetId = 'd2342bdd-f62b-a9c1-fe0c-87d0a57de831';
         //const statesetId = '79438af9-24c9-bbe4-d960-95dd38921040';
 
-        const tilesetId = '2550fafb-0766-f459-de27-422736ebf152';
-        const statesetId = 'e370d64d-0adf-11e9-80e7-98d1a381bd9a';
+        const tilesetId = '91e5200a-244f-65d5-9b1a-ba04ef043e75';
+        const statesetId = 'ee9ac575-3281-d697-2bcf-dbd557ae53f8';
 
         function GetMap() {
             //Initialize a map instance.
@@ -110,22 +110,22 @@
                 //Add event for when the focused facility level changes.
                 map.events.add('levelchanged', indoorManager, (eventData) => {
                     //code that you want to run after a level has been changed
-                    writeToInfoPanel('The level has changed:', eventData);
+                    console.log('The level has changed:', eventData);
                 });
 
                 //Add event for when the focused facility changes.
                 map.events.add('facilitychanged', indoorManager, (eventData) => {
                     //code that you want to run after a facility has been changed
-                    writeToInfoPanel('The facility has changed:', eventData);
+                    console.log('The facility has changed:', eventData);
                 });
                 
                 popup = new atlas.Popup();
                 /* Upon a mouse click, log the feature properties to the browser's console. */
-                /*map.events.add("click", function (e) {
+                map.events.add("click", function (e) {
 
                     var features = map.layers.getRenderedShapes(e.position, 'labels_indoor');
                     
-                    writeToInfoPanel('Feature(s) clicked:', features);
+                    console.log('Feature(s) clicked:', features);
 
                     features.forEach(function (feature) {
                         if (feature.layer.id == 'indoor_unit_office') {
@@ -133,27 +133,24 @@
                         }
                     });
                 });
-                */
-                map.events.add('click', getWeatherForPoint);
+                
+                /*map.events.add('click', getWeatherForPoint); */
             });
-        }
-
-        function writeToInfoPanel(msg, json) {            
+            /*function writeToInfoPanel(msg, json) {            
             document.getElementById('infoPanel-msg').innerHTML = msg;
 
             //Remove "map" object from json to prevent circular reference, and format JSON string.
-            document.getElementById('infoPanel-json').value = JSON.stringify(Object.assign({}, json, { map: undefined }), null, '\t').replace(/\"([^(\")"]+)\":/g, "$1:");
+            /*document.getElementById('infoPanel-json').value = JSON.stringify(Object.assign({}, json, { map: undefined }), null, '\t').replace(/\"([^(\")"]+)\":/g, "$1:");
+        } */
         }
+
     </script>
 </head>
 <body onload="GetMap()">
-    <div id="myMap" style="position:relative;width:100%;min-width:290px;height:900px;"></div>
+    <h1 style="text-align:center">KPMG-huset</h1>
+    <div id="myMap" style="position:relative;width:100%;min-width:290px;height: 1100px;;"></div>
     
-    <div id="infoPanel" style="position:absolute;bottom:10px;left:10px;width:100%;height:350px;border:solid 1px #000;background-color:white;padding:5px;">
-        <div id="infoPanel-msg"></div>
-        <textarea id="infoPanel-json" style="width:95%;height:550px;white-space:nowrap"></textarea>
-    </div>
-    <div id="tempInfo" style="position:absolute;top:10px;right:10px;width:160px;height:230px;border:solid 1px #000;background-color:white;padding:5px;">
+    <div id="tempInfo" style="position:absolute;top:10px;left:10px;width:160px;height:230px;border:solid 1px #000;background-color:white;padding:5px;">
         <b>Temperature:</b> <br/><br>
         <div class="row">
             <div class='box darktblue'></div>
