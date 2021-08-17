@@ -11,6 +11,8 @@
     <meta name="keywords" content="Microsoft maps, map, gis, API, SDK, Creator, indoor maps, indoor, building" />
     <meta name="author" content="Microsoft Azure Maps" />
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="index.css" type="text/css">
     <!-- Add references to the Azure Maps Map control JavaScript and CSS files. -->
     <link rel="stylesheet" href="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.css" type="text/css" />
     <script src="https://atlas.microsoft.com/sdk/javascript/mapcontrol/2/atlas.min.js"></script>
@@ -21,43 +23,8 @@
 
     <!-- Local scripts -->
     <script type="text/javascript" src="src/weatherFunctions.js"></script>
+    
 
-    <style>
-        .center {
-            margin: auto;
-            width: 50%;
-            border: 3px solid green;
-            padding: 10px;
-            }
-        .row {
-            display : flex;
-            align-items : center;
-            margin-bottom: 15px;
-            }
-        .box {
-            height: 20px;
-            width: 20px;
-            border: 1px solid black;
-            margin-right : 5px;
-            }
-        .lightred {
-            background-color: rgb(202, 74, 74);
-            }
-        .darkred {
-            background-color: rgb(168, 0, 0);
-            }
-
-            .green {
-            background-color: rgb(17, 143, 17);
-            }
-
-        .lightblue {
-            background-color: rgb(157, 157, 235);
-            }
-        .darktblue {
-            background-color: blue;
-            }
-    </style>
     <script type='text/javascript'>
         var map, indoorManager;
 
@@ -67,7 +34,7 @@
 
         const tilesetId = '91e5200a-244f-65d5-9b1a-ba04ef043e75';
         const statesetId1 = 'ee9ac575-3281-d697-2bcf-dbd557ae53f8';
-        const statesetId2 = '38fe0cb9-9b70-1d39-88ad-0e8b46db5d81'
+        const statesetId2 = '38fe0cb9-9b70-1d39-88ad-0e8b46db5d81';
         function GetMap() {
             //Initialize a map instance.
             map = new atlas.Map('myMap', {
@@ -133,7 +100,7 @@
                     });
                 });
                 window.onload = getWeatherForPoint();
-                map.events.add('click', changeStateSet);
+                
             });
             /*function writeToInfoPanel(msg, json) {            
             document.getElementById('infoPanel-msg').innerHTML = msg;
@@ -143,19 +110,47 @@
         } */
         }
         
-        function changeStateSet() {
+        function changeStateSet(stateSetId) {
             console.log("changing stateset")
-            console.log(indoorManager)
-            indoorManager.options.statesetId = statesetId2;
-            console.log(indoorManager.options.statesetId)
+                indoorManager.setOptions({
+                    statesetId: stateSetId
+                });
+            }
+        function myFunction() {
+            var x = document.getElementById("myLinks");
+            if (x.style.display === "block") {
+                x.style.display = "none";
+            } else {
+                x.style.display = "block";
+            }
         }
+        /*<div class="header">s lks dv
+        <h1>KPMG-huset</h1>
+    </div>*/
     </script>
 </head>
 <body onload="GetMap()">
-    <h1 style="text-align:center">KPMG-huset</h1>
-    <div id="myMap" style="position:relative;width:100%;min-width:290px;height: 1100px;;"></div>
     
-    <div id="tempInfo" style="position:absolute;top:10px;left:10px;width:160px;height:230px;border:solid 1px #000;background-color:white;padding:5px;">
+    <div class="topnav">
+        <a href="img/kpmg_logo.png" class="active">
+            <img src="/img/kpmg_logo.png" class="active">
+        </a>
+        
+        <div id="myLinks">
+          <a href="#temperature" onclick="changeStateSet(statesetId1)">Temperature</a>
+          <a href="#humidity" onclick="changeStateSet(statesetId2)">Humidity</a>
+          <a href="#about">About KPMG</a>
+        </div>
+        <a href="javascript:void(0);" class="icon" onclick="myFunction()">
+          <i class="fa fa-bars"></i>
+        </a>
+      </div>
+      
+      <div style="padding-left:16px">
+
+      </div>
+    <div id="myMap" style="position:relative;width:100%;min-width:290px;height: 1100px;;"></div>
+    <div id="tempInfo" style="position:absolute;bottom:10px;right:10px;width:160px;height:230px;border:solid 1px #000;background-color:white;padding:5px;">
         <b>Temperature:</b> <br/><br>
         <div class="row">
             <div class='box darktblue'></div>
@@ -180,7 +175,7 @@
                 <span> 26-100C</span>
             </div>
         </div>
-    </div>
+    </div>   
 
 </body>
 </html>

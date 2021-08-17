@@ -4,14 +4,14 @@ var currentConditionsUrl = 'https://{azMapsDomain}/weather/currentConditions/jso
 
 var weatherTemplate = {
     //The title tag for the popup. 
-    title: 'Current Conditions',
+    //title: 'Current Conditions',
 
     //HTML string template with placeholders for properties of the weather response.
     content: 
         '<img class="weather-icon" src="/img/{iconCode}.png"/>' +
         '<div class="weather-content">' +
-        '<div class="weather-temp">{temperature/value}&#176;</div>' +                
-        '<div class="weather-phrase">{phrase}</div>',
+        '<div class="weather-temp">{temperature/value}&#176 C</div>' +                
+        '<div class="weather-phrase">{phrase} outside</div>',
 
     //Format numbers with two decimal places.
     numberFormat: {
