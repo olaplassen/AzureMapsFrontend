@@ -4,4 +4,4 @@ AzureMaps integrated with Azure digital twin. This project vizualizes the map th
 
 ## Test Suite
 
-Open the project in VsCode and enter the tileset and stateset ID. Right click on the index.htlm file -> "Open with live server".
+Open the project in VsCode and enter the tileset and stateset ID. Right click on the index.htlm file -> "Open with live server". NB, need to install the live server extension. 
